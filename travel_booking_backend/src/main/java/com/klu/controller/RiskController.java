@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/risk")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @Tag(name = "Rule-Based Travel Risk Assessment", description = "Rule-based flight ranking, itinerary assessment, and travel risk scoring")
 public class RiskController {

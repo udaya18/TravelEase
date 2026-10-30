@@ -1,6 +1,6 @@
-
 import axios from 'axios';
 
+// Deployed Render backend URL
 const API_BASE_URL = 'https://travelease-backend-6vtu.onrender.com/api';
 
 export const axiosInstance = axios.create({
@@ -18,14 +18,16 @@ axiosInstance.interceptors.request.use(
     if (!token) {
       try {
         const stored = localStorage.getItem('travel-ease-storage');
+
         if (stored) {
           const parsed = JSON.parse(stored);
+
           if (parsed?.state?.token) {
             token = parsed.state.token;
           }
         }
       } catch {
-        // ignore
+        // Ignore local storage parsing errors
       }
     }
 
@@ -70,7 +72,7 @@ axiosInstance.interceptors.response.use(
             }
           }
         } catch {
-          // ignore
+          // Ignore local storage parsing errors
         }
       }
     }
@@ -78,5 +80,3 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export default axiosInstance;
