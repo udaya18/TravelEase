@@ -1,6 +1,7 @@
+
 import axios from 'axios';
 
-const API_BASE_URL = 'const API_BASE_URL = 'https://travelease-backend-6vtu.onrender.com/api';
+const API_BASE_URL = 'https://travelease-backend-6vtu.onrender.com/api';
 
 export const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -13,6 +14,7 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     let token = localStorage.getItem('travelease_token');
+
     if (!token) {
       try {
         const stored = localStorage.getItem('travel-ease-storage');
@@ -30,11 +32,10 @@ axiosInstance.interceptors.request.use(
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 // Response Interceptor: Handle Unauthorized / Token Expiry
@@ -43,18 +44,29 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       const url = error.config?.url || '';
-      const isAuthEndpoint = url.includes('/auth/signin') || url.includes('/auth/login') || url.includes('/auth/signup');
+      const isAuthEndpoint =
+        url.includes('/auth/signin') ||
+        url.includes('/auth/login') ||
+        url.includes('/auth/signup');
+
       if (!isAuthEndpoint) {
         localStorage.removeItem('travelease_token');
+
         try {
           const stored = localStorage.getItem('travel-ease-storage');
+
           if (stored) {
             const parsed = JSON.parse(stored);
+
             if (parsed?.state) {
               parsed.state.user = null;
               parsed.state.token = null;
               parsed.state.isAuthenticated = false;
-              localStorage.setItem('travel-ease-storage', JSON.stringify(parsed));
+
+              localStorage.setItem(
+                'travel-ease-storage',
+                JSON.stringify(parsed)
+              );
             }
           }
         } catch {
@@ -62,6 +74,7 @@ axiosInstance.interceptors.response.use(
         }
       }
     }
+
     return Promise.reject(error);
   }
 );
